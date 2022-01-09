@@ -8,13 +8,8 @@ public class Viking extends Fighter {
     super(HIT_POINTS, AXE);
   }
 
-  public Viking(String armor) {
-    this();
-    addArmor(armor);
-  }
-
   public Viking equip(String armor) {
-    return new Viking(armor);
+    return (Viking) addArmor(armor);
   }
 
 

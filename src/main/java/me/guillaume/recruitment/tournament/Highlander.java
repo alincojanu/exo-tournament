@@ -13,5 +13,4 @@ public class Highlander extends Fighter {
     this();
   }
 
-
 }

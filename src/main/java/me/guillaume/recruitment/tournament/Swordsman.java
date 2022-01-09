@@ -8,15 +8,13 @@ public class Swordsman extends Fighter {
      super(HIT_POINTS, SWORD);
   }
 
-  public Swordsman(String armor) {
-    this();
-    addArmor(armor);
+  public Swordsman(String vicious) {
+    super();
   }
 
   public Swordsman equip(String armor) {
-    return new Swordsman(armor);
+    return (Swordsman) addArmor(armor);
   }
-
 
 
 }

@@ -15,6 +15,8 @@ public class Fighter {
 
   private boolean cancelDamage = false;
   private int bucklerDestroyedFromAxeCount = 3;
+  private int reducedReceivedDamage = 0;
+  private int greatSwordAttackCount = 2;
 
   static Map<String, Integer> arms = new HashMap<>();
 
@@ -24,20 +26,16 @@ public class Fighter {
     arms.put(GREAT_SWORD, 12);
   }
 
-  public String weapon;
-  public List<String> armors = new ArrayList<>();
+  private String weapon;
+  private List<String> armors = new ArrayList<>();
+
+  public Fighter() {
+
+  }
 
   public Fighter(int hitPoints, String weapon) {
     this.hitPoints = hitPoints;
     this.weapon = weapon;
-  }
-
-  protected void engage(Fighter fighter) {
-    System.out.println("--> " + fighter.hitPoints);
-    if (this.hitPoints > 0 && fighter.hitPoints() > 0) {
-      fighter.injured(arms.get(weapon), hasAxe(weapon));
-      fighter.engage(this);
-    }
   }
 
   protected int hitPoints;
@@ -46,39 +44,72 @@ public class Fighter {
     return this.hitPoints;
   }
 
-  protected void injured(int dmg, boolean hasAxe) {
+  protected void engage(Fighter fighter) {
+    System.out.println("--> " + this.hitPoints);
+    if (hitPoints > 0 && fighter.hitPoints() > 0) {
+      fighter.injured(weapon, armors);
+      fighter.engage(this);
+    }
+  }
+
+  protected void injured(String weapon, List<String> armors) {
     if (hasProtection()) {
-      System.out.println("blocked");
       activateDamage();
-      if (hasAxe) {
+      if (hasAxe(weapon)) {
         bucklerDestroyedFromAxeCount--;
+        if (bucklerDestroyedFromAxeCount == 0) {
+          this.armors.remove(BUCKLER);
+        }
       }
     } else {
-      hit(dmg);
-      cancelDamage();
+      if (!weapon.equals(GREAT_SWORD) || canGreatSwordAttack(weapon)) {
+        takeHit(weapon, armors);
+        cancelDamage();
+      }
     }
+  }
+
+  private void takeHit(String weapon, List<String> armors) {
+    int damage = arms.get(weapon);
+    if (canGreatSwordAttack(weapon)) {
+      if (this.hitPoints - damage < 0) {
+        this.hitPoints = 0;
+      } else {
+        if (armors.contains(ARMOR)) {
+          damage--;
+        }
+        this.hitPoints -= (damage - this.reducedReceivedDamage);
+      }
+    }
+  }
+
+  private boolean canGreatSwordAttack(String weapon) {
+    if (weapon.equals(GREAT_SWORD)) {
+      if (this.greatSwordAttackCount % 3 != 0) {
+        this.greatSwordAttackCount--;
+      } else {
+        this.greatSwordAttackCount = 2;
+        return false;
+      }
+    }
+    return true;
   }
 
   private boolean hasProtection() {
-    return hasBucker() && cancelDamage && bucklerDestroyedFromAxeCount != 0;
+    return hasBuckler() && cancelDamage && isBucklerDestroyed();
   }
 
-  private void hit(int damage) {
-    if (this.hitPoints - damage < 0) {
-      this.hitPoints = 0;
-    } else {
-      this.hitPoints -= damage;
-    }
+  private boolean isBucklerDestroyed() {
+    return this.bucklerDestroyedFromAxeCount != 0 || !this.armors.contains(BUCKLER);
   }
 
   protected boolean hasAxe(String weapon) {
     return AXE.equals(weapon);
   }
 
-  private boolean hasBucker() {
+  private boolean hasBuckler() {
     return this.armors.contains(BUCKLER);
   }
-
 
   private void activateDamage() {
     this.cancelDamage = false;
@@ -88,10 +119,20 @@ public class Fighter {
     this.cancelDamage = true;
   }
 
-  protected void addArmor(String tool) {
+  protected Fighter addArmor(String tool) {
     if (tool.equals(BUCKLER)) {
-      cancelDamage();
       armors.add(BUCKLER);
+      cancelDamage();
     }
+    if (tool.equals(ARMOR)) {
+      armors.add(ARMOR);
+      reduceReceivedDamage(3);
+    }
+    return this;
   }
+
+  private void reduceReceivedDamage(int i) {
+    this.reducedReceivedDamage = i;
+  }
+
 }
