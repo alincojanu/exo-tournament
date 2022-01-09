@@ -2,9 +2,12 @@ package me.guillaume.recruitment.tournament;
 
 public class Swordsman {
 
-  private int points;
+  public static final int HIT_POINTS = 100;
+
+  private int leftPoints;
 
   public Swordsman() {
+    this.leftPoints = 120;
   }
 
   public Swordsman(String vicious) {
@@ -12,7 +15,8 @@ public class Swordsman {
   }
 
   public void engage(Viking viking) {
-
+    viking.injured(HIT_POINTS);
+    viking.engage(this);
   }
 
   public void engage(Highlander highlander) {
@@ -20,10 +24,15 @@ public class Swordsman {
   }
 
   public int hitPoints() {
-    return this.points;
+    return this.leftPoints;
   }
 
   public Swordsman equip(String buckler) {
     return null;
   }
+
+  public void injured(int hitPoints) {
+    this.leftPoints -= hitPoints;
+  }
+
 }
