@@ -8,16 +8,13 @@ public class Swordsman extends Fighter {
      super(HIT_POINTS, SWORD);
   }
 
-  public Swordsman(String tool) {
+  public Swordsman(String armor) {
     this();
-    if (tool.equals(BUCKLER)) {
-      activateBuckler();
-      cancelDamage();
-    }
+    addArmor(armor);
   }
 
-  public Swordsman equip(String tool) {
-    return new Swordsman(tool);
+  public Swordsman equip(String armor) {
+    return new Swordsman(armor);
   }
 
 

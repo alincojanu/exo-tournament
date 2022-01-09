@@ -8,16 +8,13 @@ public class Viking extends Fighter {
     super(HIT_POINTS, AXE);
   }
 
-  public Viking(String tool) {
+  public Viking(String armor) {
     this();
-    if (tool.equals(BUCKLER)) {
-      activateBuckler();
-      cancelDamage();
-    }
+    addArmor(armor);
   }
 
-  public Viking equip(String tool) {
-    return new Viking(tool);
+  public Viking equip(String armor) {
+    return new Viking(armor);
   }
 
 

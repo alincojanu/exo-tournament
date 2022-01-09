@@ -13,7 +13,6 @@ public class Fighter {
   public static final String AXE = "axe";
   public static final String GREAT_SWORD = "great_sword";
 
-  private boolean hasBuckler = false;
   private boolean cancelDamage = false;
   private int bucklerDestroyedFromAxeCount = 3;
 
@@ -48,16 +47,20 @@ public class Fighter {
   }
 
   protected void injured(int dmg, boolean hasAxe) {
-    if (hasBuckler && cancelDamage && bucklerDestroyedFromAxeCount != 0) {
+    if (hasProtection()) {
       System.out.println("blocked");
-      cancelDamage = false;
+      activateDamage();
       if (hasAxe) {
         bucklerDestroyedFromAxeCount--;
       }
     } else {
       hit(dmg);
-      cancelDamage = true;
+      cancelDamage();
     }
+  }
+
+  private boolean hasProtection() {
+    return hasBucker() && cancelDamage && bucklerDestroyedFromAxeCount != 0;
   }
 
   private void hit(int damage) {
@@ -72,12 +75,23 @@ public class Fighter {
     return AXE.equals(weapon);
   }
 
-  protected void activateBuckler() {
-    this.hasBuckler = true;
+  private boolean hasBucker() {
+    return this.armors.contains(BUCKLER);
+  }
+
+
+  private void activateDamage() {
+    this.cancelDamage = false;
   }
 
   protected void cancelDamage() {
     this.cancelDamage = true;
   }
 
+  protected void addArmor(String tool) {
+    if (tool.equals(BUCKLER)) {
+      cancelDamage();
+      armors.add(BUCKLER);
+    }
+  }
 }
